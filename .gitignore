@@ -1,0 +1,33 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# Nix build artifacts
+result
+*.drv
+*.lock
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Node.js
+node_modules/
+
+# VSCode
+.vscode/
+
+# Git
+.git/
+.github/
+
+# Other
+*.bak
+*.old
