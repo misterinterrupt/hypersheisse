@@ -11,6 +11,16 @@ param(
 # Define the identifier as a variable
 $identifier = "hs"
 
+# Display usage message
+function Show-Usage {
+    Write-Host "Usage: .\create-vm-cloud-init.ps1 -vmName <YourVMName> [-osImagePath <PathToOSImage>] [-includeNixFiles]" -ForegroundColor Yellow
+    Write-Host "  -vmName <YourVMName>       : Name of the VM" -ForegroundColor Yellow
+    Write-Host "  -osImagePath <PathToOSImage> : Path to the OS image (optional)" -ForegroundColor Yellow
+    Write-Host "  -includeNixFiles            : Include configuration.nix and flake.nix in the VM setup" -ForegroundColor Yellow
+    Write-Host "  -i                          : Interactive mode" -ForegroundColor Yellow
+    Write-Host "Example: .\create-vm-cloud-init.ps1 -vmName MyVM -osImagePath ./os-image.img -includeNixFiles" -ForegroundColor Yellow
+}
+
 # Interactive mode
 if ($i) {
     Write-Host "Welcome to the VM management script!"
@@ -113,15 +123,14 @@ runcmd:
 # Validate VM name
 if (-not $vmName) {
     Write-Error 'Error: You must provide a VM name.'
-    Write-Host  'Usage: .\create-vm-cloud-init.ps1 -vmName <YourVMName> [-osImagePath <PathToOSImage>] [-includeNixFiles]'
-    Write-Host  'Usage (interactive mode): .\create-vm-cloud-init.ps1 -i'
+    Show-Usage
     exit 1
 }
 
 # Validate that osImagePath is provided if includeNixFiles is set
 if ($includeNixFiles -and -not $osImagePath) {
     Write-Error 'Error: The -includeNixFiles option requires the -osImagePath option to be set.'
-    Write-Host 'Usage: .\create-vm-cloud-init.ps1 -vmName <YourVMName> -osImagePath <PathToOSImage> -includeNixFiles'
+    Show-Usage
     exit 1
 }
 

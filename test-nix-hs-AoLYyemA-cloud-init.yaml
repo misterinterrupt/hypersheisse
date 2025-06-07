@@ -1,0 +1,51 @@
+
+users:
+  - default
+  - name: vmuser
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGqcGwfApaTWDGWDWrgGM0F7ItFdcmMiMzCyu5LP9mqR vmuser
+system:
+  image: C:/Users/labuser/Downloads/nixos-graphical-25.05.803471.4792576cb003-x86_64-linux.iso
+
+write_files:
+  - path: /etc/nixos/configuration.nix
+    content: |
+      {
+        imports = [
+          ./hardware-configuration.nix
+        ];
+      
+        boot.loader.grub.enable = true;
+        boot.loader.grub.version = 2;
+        boot.loader.grub.device = "/dev/sda"; # Adjust as needed
+      
+        networking.hostName = "kvm-hypervisor";
+        networking.networkmanager.enable = true;
+      
+        services.libvirtd.enable = true;
+        virtualisation.qemu.package = pkgs.qemu_kvm;
+      
+        users.users.root.initialPassword = "root"; # Change this for security
+      
+        system.stateVersion = "23.05"; # Adjust to your NixOS version
+      }
+  - path: /etc/nixos/flake.nix
+    content: |
+      {
+        description = "NixOS KVM Hypervisor";
+      
+        inputs.nixpkgs.url = "github:NixOS/nixpkgs";
+      
+        outputs = { self, nixpkgs }: {
+          nixosConfigurations.kvm-hypervisor = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            modules = [
+              ./configuration.nix
+            ];
+          };
+        };
+      }
+runcmd:
+  - nixos-rebuild switch
+
